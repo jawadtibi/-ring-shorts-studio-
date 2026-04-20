@@ -1,0 +1,919 @@
+
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ring Shorts Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root, [data-theme="light"] {
+      --text-xs: clamp(0.75rem, 0.72rem + 0.2vw, 0.875rem);
+      --text-sm: clamp(0.875rem, 0.84rem + 0.2vw, 1rem);
+      --text-base: clamp(1rem, 0.97rem + 0.2vw, 1.1rem);
+      --text-lg: clamp(1.125rem, 1rem + 0.55vw, 1.45rem);
+      --text-xl: clamp(1.55rem, 1.2rem + 1vw, 2.3rem);
+      --text-2xl: clamp(2.15rem, 1.5rem + 2vw, 3.6rem);
+      --space-1:.25rem; --space-2:.5rem; --space-3:.75rem; --space-4:1rem; --space-5:1.25rem; --space-6:1.5rem; --space-8:2rem; --space-10:2.5rem;
+      --bg:#f6f4ef; --surface:#faf9f6; --surface-2:#ffffff; --surface-3:#f1eee7; --border:#d6d1c7;
+      --text:#242018; --muted:#6f6b63; --faint:#9d988f; --primary:#0a6b72; --primary-2:#0d8a8d; --accent:#efe5b9; --ok:#1b8f4b; --warn:#a26800;
+      --radius-sm:.55rem; --radius-md:.9rem; --radius-lg:1.25rem; --radius-xl:1.7rem; --radius-pill:999px;
+      --shadow-sm:0 2px 6px rgba(0,0,0,.06); --shadow-md:0 18px 40px rgba(0,0,0,.08);
+      --font-display:'Instrument Serif', Georgia, serif; --font-body:'Inter', system-ui, sans-serif;
+    }
+    [data-theme="dark"] {
+      --bg:#141311; --surface:#1a1917; --surface-2:#201f1c; --surface-3:#262421; --border:#3b3935;
+      --text:#eeeadf; --muted:#b4aea3; --faint:#827b70; --primary:#5aa8b0; --primary-2:#7ac4c7; --accent:#52461c; --ok:#46b96e; --warn:#d8a042;
+      --shadow-sm:0 2px 6px rgba(0,0,0,.25); --shadow-md:0 18px 40px rgba(0,0,0,.35);
+    }
+    * { box-sizing:border-box; }
+    html, body { margin:0; padding:0; }
+    body {
+      min-height:100dvh;
+      font-family:var(--font-body);
+      font-size:var(--text-base);
+      line-height:1.55;
+      color:var(--text);
+      background: radial-gradient(circle at top right, color-mix(in srgb, var(--primary) 18%, transparent), transparent 25%), var(--bg);
+    }
+    button, input, select, textarea { font:inherit; color:inherit; }
+    button { cursor:pointer; }
+    textarea, input, select {
+      width:100%;
+      background:var(--surface-2);
+      border:1px solid var(--border);
+      border-radius:var(--radius-md);
+      padding:.92rem 1rem;
+      transition:border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+    }
+    textarea { min-height:108px; resize:vertical; }
+    textarea:focus, input:focus, select:focus {
+      outline:none;
+      border-color:var(--primary);
+      box-shadow:0 0 0 4px color-mix(in srgb, var(--primary) 18%, transparent);
+    }
+    .app { max-width:1400px; margin:0 auto; padding:1.2rem; }
+    .topbar, .hero, .workspace, .output-grid, .micro-grid, .score-grid { display:grid; gap:1rem; }
+    .topbar { grid-template-columns:1fr auto; align-items:center; margin-bottom:1rem; }
+    .brand { display:flex; align-items:center; gap:.85rem; }
+    .logo {
+      width:48px; height:48px; border-radius:14px; display:grid; place-items:center;
+      border:1px solid var(--border); background:var(--surface); box-shadow:var(--shadow-sm);
+    }
+    .logo svg { width:26px; height:26px; color:var(--primary); }
+    h1, h2, h3, h4, p { margin:0; }
+    .brand h1 { font:400 var(--text-xl)/1 var(--font-display); letter-spacing:-.03em; }
+    .brand p { color:var(--muted); font-size:var(--text-sm); margin-top:.15rem; }
+    .top-actions { display:flex; gap:.7rem; flex-wrap:wrap; justify-content:flex-end; }
+    .btn, .btn-ghost, .btn-soft, .btn-copy, .theme-toggle {
+      border:none; border-radius:var(--radius-pill); min-height:44px; padding:.8rem 1rem;
+    }
+    .btn { background:var(--primary); color:white; font-weight:700; }
+    .btn:hover { background:var(--primary-2); }
+    .btn-ghost, .theme-toggle { background:var(--surface); border:1px solid var(--border); }
+    .btn-soft, .btn-copy { background:var(--surface-3); border:1px solid var(--border); }
+    .hero { grid-template-columns:1.15fr .85fr; margin-bottom:1rem; }
+    .card {
+      background:color-mix(in srgb, var(--surface) 90%, transparent);
+      border:1px solid var(--border);
+      border-radius:1.4rem;
+      box-shadow:var(--shadow-md);
+      backdrop-filter:blur(12px);
+    }
+    .hero-main, .hero-side, .panel { padding:1.25rem; }
+    .eyebrow {
+      display:inline-flex; align-items:center; gap:.4rem; margin-bottom:.8rem;
+      padding:.35rem .75rem; border-radius:var(--radius-pill);
+      background:color-mix(in srgb, var(--primary) 12%, var(--surface)); color:var(--primary);
+      font-size:var(--text-xs); font-weight:800; letter-spacing:.02em;
+    }
+    .hero-main h2 { font:400 var(--text-2xl)/.95 var(--font-display); max-width:13ch; margin-bottom:.8rem; }
+    .hero-main p, .hero-side p, .note, .muted { color:var(--muted); }
+    .chips { display:flex; flex-wrap:wrap; gap:.55rem; margin-top:1rem; }
+    .chip {
+      border:1px solid var(--border); background:var(--surface-2); padding:.55rem .8rem;
+      border-radius:999px; font-size:var(--text-xs); color:var(--muted);
+    }
+    .workspace { grid-template-columns:470px 1fr; align-items:start; }
+    .panel.sticky { position:sticky; top:1rem; }
+    .section-title { display:flex; justify-content:space-between; align-items:center; gap:1rem; margin-bottom:.9rem; }
+    .section-title h3 { font-size:var(--text-lg); }
+    .form-grid { display:grid; gap:.9rem; }
+    .form-row { display:grid; gap:.45rem; }
+    .form-row label { font-size:var(--text-sm); font-weight:700; }
+    .hint { font-size:var(--text-xs); color:var(--muted); }
+    .two { display:grid; grid-template-columns:1fr 1fr; gap:.8rem; }
+    .three { display:grid; grid-template-columns:repeat(3, 1fr); gap:.8rem; }
+    .quick-presets { display:flex; flex-wrap:wrap; gap:.55rem; }
+    .preset-btn {
+      border:1px solid var(--border); background:var(--surface-2); padding:.65rem .8rem;
+      border-radius:.85rem; text-align:left; font-size:var(--text-xs);
+    }
+    .preset-btn:hover { transform:translateY(-1px); }
+    .stack { display:grid; gap:.9rem; }
+    .stat-bar {
+      width:100%; height:10px; border-radius:999px; overflow:hidden; background:var(--surface-3); border:1px solid var(--border);
+    }
+    .stat-fill { height:100%; width:0%; background:linear-gradient(90deg, var(--warn), var(--ok)); transition:width .2s ease; }
+    .score-grid { grid-template-columns:repeat(4, 1fr); }
+    .score-box {
+      padding:.9rem; border:1px solid var(--border); border-radius:1rem; background:var(--surface-2);
+    }
+    .score-box strong { display:block; font-size:1.3rem; margin-bottom:.2rem; }
+    .output-grid { grid-template-columns:repeat(2, minmax(0,1fr)); }
+    .result-card { padding:1rem; }
+    .result-head { display:flex; justify-content:space-between; gap:.75rem; align-items:center; margin-bottom:.8rem; }
+    .result-head h4 { font-size:1.05rem; }
+    .mono {
+      white-space:pre-wrap; background:var(--surface-2); border:1px solid var(--border);
+      border-radius:1rem; padding:1rem; min-height:120px;
+    }
+    .list-box { padding-left:1.15rem; margin:0; display:grid; gap:.55rem; }
+    .plain-list { margin:0; padding-left:1.1rem; display:grid; gap:.45rem; }
+    .badge-row { display:flex; flex-wrap:wrap; gap:.45rem; }
+    .badge { background:var(--surface-3); border:1px solid var(--border); border-radius:999px; padding:.42rem .65rem; font-size:var(--text-xs); }
+    .footer-actions { display:flex; gap:.7rem; flex-wrap:wrap; margin-top:.85rem; }
+    .micro-grid { grid-template-columns:repeat(3, 1fr); }
+    .mini-card { padding:1rem; }
+    .checkboxes { display:grid; gap:.45rem; }
+    .check-item { display:flex; align-items:flex-start; gap:.55rem; font-size:var(--text-sm); }
+    .check-item input { width:auto; margin-top:.15rem; }
+    .pill-note {
+      display:inline-flex; gap:.5rem; align-items:center; padding:.45rem .7rem; border-radius:999px;
+      background:color-mix(in srgb, var(--accent) 55%, var(--surface)); border:1px solid var(--border); font-size:var(--text-xs);
+    }
+    .small { font-size:var(--text-sm); }
+    .hidden { display:none !important; }
+    @media (max-width:1100px) {
+      .hero, .workspace, .output-grid, .micro-grid, .score-grid { grid-template-columns:1fr; }
+      .panel.sticky { position:static; }
+    }
+    @media (max-width:760px) {
+      .app { padding:.85rem; }
+      .topbar { grid-template-columns:1fr; }
+      .top-actions { justify-content:flex-start; }
+      .two, .three { grid-template-columns:1fr; }
+      .hero-main h2 { max-width:none; }
+    }
+    * { -webkit-tap-highlight-color:transparent; }
+    body { overscroll-behavior:none; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5v8a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5z"/><path d="M9.5 14a2.5 2.5 0 1 1 5 0c0 1.7-2.5 4-2.5 4S9.5 15.7 9.5 14z"/></svg>
+        </div>
+        <div>
+          <h1>Ring Shorts Studio</h1>
+          <p>Turn a rough doorbell-camera idea into hooks, titles, thumbnails, shot beats, prompts, SEO, and a production-ready package.</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button class="btn-ghost" id="randomBtn">Random idea</button>
+        <button class="btn-soft" id="saveBtn">Save draft</button>
+        <button class="btn-soft" id="exportBtn">Export package</button>
+        <button class="theme-toggle" data-theme-toggle aria-label="Switch theme">🌙</button>
+      </div>
+    </div>
+
+    <section class="hero">
+      <div class="card hero-main">
+        <div class="eyebrow">Built for YouTube Shorts</div>
+        <h2>Go from “weird porch moment” to a full content system.</h2>
+        <p>This version is designed to be genuinely useful: live-updating inputs, stronger idea shaping, multiple output angles, quality scoring, local autosave, and one-click copy/export.</p>
+        <div class="chips">
+          <div class="chip">Live updates everywhere</div>
+          <div class="chip">Multiple title and hook angles</div>
+          <div class="chip">Prompt variants for testing</div>
+          <div class="chip">SEO and CTA support</div>
+          <div class="chip">Retention-focused script beats</div>
+        </div>
+      </div>
+      <div class="card hero-side">
+        <div class="eyebrow">User-focused improvements</div>
+        <div class="stack small">
+          <p><strong>1.</strong> The app now thinks in packages, not just one prompt, so users can test several angles fast.</p>
+          <p><strong>2.</strong> Every field updates all sub-sections live, including hooks, titles, thumbnails, scripts, prompts, and metadata.</p>
+          <p><strong>3.</strong> Drafts save locally, exports are clean, and copy buttons work correctly for every output type.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="workspace">
+      <div class="card panel sticky">
+        <div class="section-title">
+          <h3>Creative inputs</h3>
+          <span class="pill-note" id="autosaveStatus">Autosave on</span>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-row">
+            <label for="idea">Core idea</label>
+            <textarea id="idea" placeholder="A delivery driver drops off a package, starts walking away, then freezes when a shadow moves behind the glass door."></textarea>
+            <div class="hint">Write the strange moment clearly. The rest of the app will build around this.</div>
+          </div>
+
+          <div class="quick-presets" id="presetWrap"></div>
+
+          <div class="two">
+            <div class="form-row">
+              <label for="tone">Tone</label>
+              <select id="tone">
+                <option>Suspenseful</option>
+                <option>Funny</option>
+                <option>Creepy</option>
+                <option>Wholesome</option>
+                <option>Chaotic</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label for="emotion">Target emotion</label>
+              <select id="emotion">
+                <option>Curiosity</option>
+                <option>Shock</option>
+                <option>Laughter</option>
+                <option>Tension</option>
+                <option>Relief</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="three">
+            <div class="form-row">
+              <label for="length">Length</label>
+              <select id="length">
+                <option>15 seconds</option>
+                <option selected>20 seconds</option>
+                <option>30 seconds</option>
+                <option>45 seconds</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label for="twist">Twist type</label>
+              <select id="twist">
+                <option>Misread danger</option>
+                <option>Funny misunderstanding</option>
+                <option>Unexpected return</option>
+                <option>Reveal behind glass</option>
+                <option>Neighbor chaos</option>
+                <option>Heartwarming payoff</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label for="realism">Realism level</label>
+              <select id="realism">
+                <option>Very realistic</option>
+                <option selected>Realistic but cinematic</option>
+                <option>Stylized social clip</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="two">
+            <div class="form-row">
+              <label for="audience">Audience angle</label>
+              <input id="audience" value="People who stop scrolling for strange but believable caught-on-camera moments" />
+            </div>
+            <div class="form-row">
+              <label for="series">Series strategy</label>
+              <input id="series" value="Build a repeatable Shorts format with return viewers, comments, and sponsor-friendly packaging" />
+            </div>
+          </div>
+
+          <div class="two">
+            <div class="form-row">
+              <label for="setting">Setting details</label>
+              <input id="setting" value="Suburban front porch at night, warm porch bulb, reflective glass door, package on doormat" />
+            </div>
+            <div class="form-row">
+              <label for="ctaStyle">CTA style</label>
+              <select id="ctaStyle">
+                <option>Ask a question</option>
+                <option>Tease part 2</option>
+                <option>Invite comments</option>
+                <option>Challenge the viewer</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label for="rules">Avoid / safety constraints</label>
+            <input id="rules" value="No gore, no explicit violence, no hateful content, and no claim that staged footage is real" />
+          </div>
+
+          <div class="checkboxes">
+            <label class="check-item"><input type="checkbox" id="includeText" checked> Include on-screen text ideas.</label>
+            <label class="check-item"><input type="checkbox" id="includeSound" checked> Include sound design cues.</label>
+            <label class="check-item"><input type="checkbox" id="includeSEO" checked> Include keywords and hashtags.</label>
+            <label class="check-item"><input type="checkbox" id="safeMode" checked> Keep outputs advertiser-friendly.</label>
+          </div>
+
+          <div class="footer-actions">
+            <button class="btn" id="generateBtn">Generate full package</button>
+            <button class="btn-ghost" id="resetBtn">Load example</button>
+            <button class="btn-soft" id="clearBtn">Clear</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="stack">
+        <div class="card panel">
+          <div class="section-title">
+            <h3>Idea score</h3>
+            <span class="small muted" id="scoreLabel">Ready to publish with a few tweaks</span>
+          </div>
+          <div class="stat-bar"><div class="stat-fill" id="scoreFill"></div></div>
+          <div class="score-grid" style="margin-top:1rem;">
+            <div class="score-box"><strong id="scoreMain">0</strong><span class="muted small">Overall</span></div>
+            <div class="score-box"><strong id="scoreHook">0</strong><span class="muted small">Hook strength</span></div>
+            <div class="score-box"><strong id="scoreClarity">0</strong><span class="muted small">Clarity</span></div>
+            <div class="score-box"><strong id="scoreSeries">0</strong><span class="muted small">Series potential</span></div>
+          </div>
+          <div class="micro-grid" style="margin-top:1rem;">
+            <div class="mini-card" style="border:1px solid var(--border); border-radius:1rem; background:var(--surface-2);">
+              <h4 style="margin-bottom:.55rem;">What helps</h4>
+              <ul class="plain-list" id="wins"></ul>
+            </div>
+            <div class="mini-card" style="border:1px solid var(--border); border-radius:1rem; background:var(--surface-2);">
+              <h4 style="margin-bottom:.55rem;">Improve next</h4>
+              <ul class="plain-list" id="fixes"></ul>
+            </div>
+            <div class="mini-card" style="border:1px solid var(--border); border-radius:1rem; background:var(--surface-2);">
+              <h4 style="margin-bottom:.55rem;">Packaging cues</h4>
+              <div class="badge-row" id="packagingBadges"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="output-grid">
+          <div class="card result-card">
+            <div class="result-head"><h4>Hooks</h4><button class="btn-copy" data-copy="hooksText">Copy</button></div>
+            <ul class="list-box" id="hooks"></ul>
+            <textarea id="hooksText" class="hidden"></textarea>
+          </div>
+
+          <div class="card result-card">
+            <div class="result-head"><h4>Titles</h4><button class="btn-copy" data-copy="titles">Copy</button></div>
+            <div id="titles" class="mono"></div>
+          </div>
+
+          <div class="card result-card">
+            <div class="result-head"><h4>Thumbnail text</h4><button class="btn-copy" data-copy="thumbs">Copy</button></div>
+            <div id="thumbs" class="mono"></div>
+          </div>
+
+          <div class="card result-card">
+            <div class="result-head"><h4>Script beats</h4><button class="btn-copy" data-copy="script">Copy</button></div>
+            <div id="script" class="mono"></div>
+          </div>
+
+          <div class="card result-card">
+            <div class="result-head"><h4>Shot list</h4><button class="btn-copy" data-copy="shots">Copy</button></div>
+            <div id="shots" class="mono"></div>
+          </div>
+
+          <div class="card result-card">
+            <div class="result-head"><h4>Caption + CTA</h4><button class="btn-copy" data-copy="caption">Copy</button></div>
+            <div id="caption" class="mono"></div>
+          </div>
+
+          <div class="card result-card">
+            <div class="result-head"><h4>SEO</h4><button class="btn-copy" data-copy="seo">Copy</button></div>
+            <div id="seo" class="mono"></div>
+          </div>
+
+          <div class="card result-card">
+            <div class="result-head"><h4>Perplexity prompt</h4><button class="btn-copy" data-copy="prompt">Copy</button></div>
+            <textarea id="prompt" class="mono" readonly></textarea>
+          </div>
+        </div>
+
+        <div class="output-grid">
+          <div class="card result-card">
+            <div class="result-head"><h4>A/B prompt variants</h4><button class="btn-copy" data-copy="variants">Copy</button></div>
+            <div id="variants" class="mono"></div>
+          </div>
+          <div class="card result-card">
+            <div class="result-head"><h4>Production checklist</h4><button class="btn-copy" data-copy="checklist">Copy</button></div>
+            <div id="checklist" class="mono"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+<script>
+const id = (x) => document.getElementById(x);
+const storageKey = 'ring-shorts-studio-v2';
+const state = { dark: false };
+
+const presets = [
+  {
+    label: 'Glass-door shadow',
+    idea: 'A delivery driver drops off a package, takes two steps away, then freezes when a shape moves behind the glass door.',
+    tone: 'Suspenseful', emotion: 'Curiosity', twist: 'Reveal behind glass'
+  },
+  {
+    label: 'Neighbor mistake',
+    idea: 'A neighbor sneaks onto the porch to return a package but panics when the motion light flips on and the homeowner speaks through the camera.',
+    tone: 'Funny', emotion: 'Laughter', twist: 'Funny misunderstanding'
+  },
+  {
+    label: 'Dog reveal',
+    idea: 'A person thinks someone is scratching at the glass late at night, but the camera reveals the family dog trapped between the curtain and the door.',
+    tone: 'Wholesome', emotion: 'Relief', twist: 'Heartwarming payoff'
+  },
+  {
+    label: 'Package returns',
+    idea: 'A stolen package mysteriously appears back on the porch ten minutes later with nobody in sight.',
+    tone: 'Creepy', emotion: 'Shock', twist: 'Unexpected return'
+  }
+];
+
+function sentenceCase(str) {
+  return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
+}
+
+function slugWords(text) {
+  return text.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(Boolean);
+}
+
+function keywordize(text) {
+  const stop = ['that','with','this','from','then','they','your','have','into','when','what','there','about','would','could','just','like','been','were','here','after','before','over','under','them','their','because','while','where'];
+  return slugWords(text).filter(w => w.length > 3 && !stop.includes(w)).slice(0, 10);
+}
+
+function smartSet(el, text) {
+  if (!el) return;
+  if ('value' in el && (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT')) {
+    el.value = text;
+  } else {
+    el.textContent = text;
+  }
+}
+
+function copyText(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    const original = btn.textContent;
+    btn.textContent = 'Copied';
+    btn.disabled = true;
+    setTimeout(() => {
+      btn.textContent = original;
+      btn.disabled = false;
+    }, 1200);
+  });
+}
+
+function getData() {
+  return {
+    idea: id('idea').value.trim(),
+    tone: id('tone').value,
+    emotion: id('emotion').value,
+    length: id('length').value,
+    twist: id('twist').value,
+    realism: id('realism').value,
+    audience: id('audience').value.trim(),
+    series: id('series').value.trim(),
+    setting: id('setting').value.trim(),
+    ctaStyle: id('ctaStyle').value,
+    rules: id('rules').value.trim(),
+    includeText: id('includeText').checked,
+    includeSound: id('includeSound').checked,
+    includeSEO: id('includeSEO').checked,
+    safeMode: id('safeMode').checked
+  };
+}
+
+function saveDraft() {
+  localStorage.setItem(storageKey, JSON.stringify(getData()));
+  id('autosaveStatus').textContent = 'Saved locally';
+  setTimeout(() => id('autosaveStatus').textContent = 'Autosave on', 1200);
+}
+
+function loadDraft() {
+  const raw = localStorage.getItem(storageKey);
+  if (!raw) return false;
+  try {
+    const data = JSON.parse(raw);
+    Object.keys(data).forEach(key => {
+      const el = id(key);
+      if (!el) return;
+      if (el.type === 'checkbox') el.checked = !!data[key];
+      else el.value = data[key] ?? '';
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function applyPreset(p) {
+  id('idea').value = p.idea;
+  id('tone').value = p.tone;
+  id('emotion').value = p.emotion;
+  id('twist').value = p.twist;
+  generatePackage();
+}
+
+function randomFrom(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function getHookTemplates(tone, twist) {
+  const map = {
+    Suspenseful: [
+      'Wait for the last 3 seconds.',
+      'At first this looked completely normal.',
+      'Look behind the glass after the drop-off.',
+      'The second movement changes everything.'
+    ],
+    Funny: [
+      'This was not the reaction anyone expected.',
+      'The porch cam caught instant comedy.',
+      'He tried to act normal for exactly one second.',
+      'The camera heard the panic before we did.'
+    ],
+    Creepy: [
+      'Something came back to the door.',
+      'This is why people rewatch Ring footage.',
+      'Nobody notices the background on first watch.',
+      'The porch was empty until it suddenly wasn't.'
+    ],
+    Wholesome: [
+      'The ending completely flips the mood.',
+      'This looked suspicious until the reveal.',
+      'The porch cam caught something unexpectedly sweet.',
+      'The last frame makes the whole thing worth it.'
+    ],
+    Chaotic: [
+      'This escalated way too fast.',
+      'Everything was normal for two seconds.',
+      'The porch turned into instant chaos.',
+      'Nobody involved had a plan after this point.'
+    ]
+  };
+  const twistLine = {
+    'Misread danger': 'What looked dangerous wasn't the real problem.',
+    'Funny misunderstanding': 'This whole thing started with the wrong assumption.',
+    'Unexpected return': 'The weird part is that it came back.',
+    'Reveal behind glass': 'Do not stop watching the glass door.',
+    'Neighbor chaos': 'The neighbor made this ten times worse.',
+    'Heartwarming payoff': 'The ending turns the tension into something sweet.'
+  };
+  return [...map[tone], twistLine[twist]];
+}
+
+function getCta(ctaStyle) {
+  const map = {
+    'Ask a question': 'Would you have checked the footage again?',
+    'Tease part 2': 'There's an even weirder angle in part 2.',
+    'Invite comments': 'Comment what you thought was behind the door.',
+    'Challenge the viewer': 'Watch it once and tell me the exact second you noticed it.'
+  };
+  return map[ctaStyle] || map['Ask a question'];
+}
+
+function scoreIdea(data, keys) {
+  let hook = 42;
+  let clarity = 40;
+  let series = 38;
+  if (data.idea.length > 80) hook += 12;
+  if (keys.length >= 4) clarity += 18;
+  if (/door|glass|package|porch|camera|shadow|delivery|neighbor/.test(data.idea.toLowerCase())) hook += 14;
+  if (data.twist !== 'Misread danger') series += 12;
+  if (data.audience.length > 25) series += 10;
+  if (data.series.length > 25) series += 14;
+  if (data.safeMode) series += 8;
+  if (data.idea.split(' ').length > 12) clarity += 8;
+  if (data.setting.length > 20) clarity += 12;
+  hook = Math.min(100, hook);
+  clarity = Math.min(100, clarity);
+  series = Math.min(100, series);
+  const overall = Math.round((hook + clarity + series) / 3);
+  return { overall, hook, clarity, series };
+}
+
+function buildOutputs(data) {
+  const keys = keywordize(data.idea);
+  const k1 = sentenceCase(keys[0] || 'Porch');
+  const k2 = sentenceCase(keys[1] || 'Door');
+  const k3 = sentenceCase(keys[2] || 'Package');
+  const hookLines = getHookTemplates(data.tone, data.twist);
+  const cta = getCta(data.ctaStyle);
+  const safeText = data.safeMode ? 'Keep all visuals advertiser-friendly, suspenseful rather than graphic, and clearly fictional if staged.' : 'Lean further into intensity while staying platform-safe.';
+
+  const hooks = [
+    hookLines[0],
+    hookLines[1],
+    `${k1} was the setup. ${k2} was the real story.`,
+    hookLines[2],
+    `${hookLines[3]} ${data.emotion === 'Laughter' ? 'The payoff should land fast.' : 'The reveal should land hard.'}`
+  ];
+
+  const titles = [
+    `1. Ring Camera Caught This ${data.tone.toLowerCase()} Porch Moment`,
+    `2. Nobody Expected What Happened Behind the Glass Door`,
+    `3. The Camera Saw the Twist Before Anyone Else`,
+    `4. This Normal Delivery Turned Weird Fast`,
+    `5. Rewatch the Door the Moment He Steps Away`,
+    `6. ${k1}, a Package, and a Twist in ${data.length.replace(' seconds','')} Seconds` 
+  ].join('
+');
+
+  const thumbs = [
+    'WATCH THE GLASS',
+    'IT MOVED',
+    '2 SECONDS LATER',
+    'HE SAW IT TOO',
+    `${k1.toUpperCase()} TWIST`
+  ].join('
+');
+
+  const textMoments = data.includeText
+    ? `On-screen text ideas:
+- ${hooks[0]}
+- "Wait for the movement"
+- "Look behind the glass"
+- "Did you catch it?"
+
+`
+    : '';
+
+  const soundBeats = data.includeSound
+    ? `Sound cues:
+- Soft porch ambience at open
+- Quick tension rise at the second movement
+- Beat stop right before the reveal
+- One clean hit when the twist lands
+
+`
+    : '';
+
+  const lengthNum = Number((data.length.match(/\d+/) || ['20'])[0]);
+  const revealMark = Math.max(8, Math.round(lengthNum * 0.7));
+  const script = [
+    `0-2s: Open on the most confusing frame immediately. Hook line: ${hooks[0]}`,
+    `2-5s: Show the normal setup quickly so the viewer understands the porch, package, and camera angle.`,
+    `5-${Math.max(7, revealMark - 2)}s: Push attention to the key visual clue tied to ${k1.toLowerCase()}, ${k2.toLowerCase()}, or movement behind the door.`,
+    `${revealMark}-${Math.max(revealMark + 2, lengthNum - 2)}s: Reveal the twist: ${data.twist.toLowerCase()}. Make the emotional payoff feel ${data.emotion.toLowerCase()}.`,
+    `Final 2s: End on a clear replay-worthy frame and CTA: ${cta}`,
+    '',
+    textMoments + soundBeats + `Retention rule: do not explain too early. Let the audience form the wrong assumption first.`
+  ].join('
+');
+
+  const shots = [
+    `Shot 1: Wide Ring-camera frame showing ${data.setting}.`,
+    `Shot 2: Delivery or approach action that makes the scene feel ordinary.`,
+    `Shot 3: Small suspicious movement near ${k2.toLowerCase()} or reflected glass.`,
+    `Shot 4: Replay, crop, zoom, or freeze frame on the clue.`,
+    `Shot 5: Twist reveal centered on ${data.twist.toLowerCase()}.`,
+    `Shot 6: Final hold on the strongest reaction frame plus on-screen CTA.`
+  ].join('
+');
+
+  const caption = [
+    `Caption: At first this looked like a normal package drop... then the camera caught the part nobody noticed on the first watch.`,
+    `CTA: ${cta}`,
+    `Comment bait: What did you think was behind the door before the reveal?`
+  ].join('
+');
+
+  const seoKeywords = [k1.toLowerCase(), k2.toLowerCase(), k3.toLowerCase(), 'ring camera', 'doorbell camera', 'caught on camera', 'youtube shorts', data.tone.toLowerCase(), data.twist.toLowerCase()].filter(Boolean);
+  const seo = data.includeSEO ? [
+    `Keywords: ${seoKeywords.join(', ')}`,
+    `Hashtags: #ringcamera #doorbellcamera #caughtoncamera #youtubeshorts #shorts #${data.tone.toLowerCase().replace(/\s+/g,'')} #porchstory`,
+    `Search angle: ${data.audience}`
+  ].join('
+') : 'SEO disabled.';
+
+  const prompt = [
+    `Create a ${data.length.toLowerCase()} vertical video for YouTube Shorts in a ${data.tone.toLowerCase()} tone.`,
+    `Core concept: ${data.idea}.`,
+    `Twist structure: ${data.twist}.`,
+    `Viewer emotion target: ${data.emotion.toLowerCase()}.`,
+    `Visual realism: ${data.realism}.`,
+    `Setting details: ${data.setting}.`,
+    `Audience angle: ${data.audience}.`,
+    `Series strategy: ${data.series}.`,
+    `Include a strong first-second hook, a misdirect before the reveal, and a clean replay-worthy final frame.`,
+    `Use believable doorbell-camera framing, realistic porch lighting, natural movement, and simple readable on-screen text.`,
+    `${safeText}`,
+    `Safety constraints: ${data.rules}.`,
+    `Optimize for silent autoplay, fast pacing, and comment-worthy payoff.`
+  ].join('
+');
+
+  const variants = [
+    `Variant A — realism-first:
+Make the footage feel nearly indistinguishable from real Ring footage, with subtle acting and minimal editing. Prioritize believable timing and small visual clues.`,
+    `Variant B — retention-first:
+Keep the first 2 seconds visually confusing in a good way, hold the reveal until late, and emphasize replay value with a crisp final frame.`,
+    `Variant C — monetization-friendly:
+Keep the story clean, advertiser-friendly, high-retention, easy to serialize, and suitable for repeated weekly uploads built around porch mysteries.`
+  ].join('
+
+');
+
+  const checklist = [
+    'Open on the most confusing frame.',
+    'Show the normal setup quickly.',
+    'Make one visual clue clearly replay-worthy.',
+    'Delay the explanation until the reveal window.',
+    'Use 2-4 words of readable on-screen text.',
+    'End on a comment-driving question or part 2 tease.',
+    'Do not oversell authenticity if the clip is staged.'
+  ].join('
+');
+
+  const scores = scoreIdea(data, keys);
+  const wins = [];
+  const fixes = [];
+  if (data.idea.length > 70) wins.push('The premise has enough detail to feel visual.'); else fixes.push('Add one more concrete visual detail to the premise.');
+  if (data.setting.length > 25) wins.push('The setting helps the scene feel believable.'); else fixes.push('Add clearer porch or door details.');
+  if (data.series.length > 25) wins.push('The idea can fit a repeatable series format.'); else fixes.push('Clarify how this becomes a recurring series.');
+  if (data.safeMode) wins.push('The package is more advertiser-friendly.'); else fixes.push('Use safer phrasing if you want broader monetization.');
+  if (data.twist === 'Funny misunderstanding' || data.twist === 'Heartwarming payoff') wins.push('The twist supports sharing and comments.');
+  if (fixes.length < 3) fixes.push('Test two thumbnail word sets before posting.');
+  if (fixes.length < 3) fixes.push('Trim any exposition from the middle beats.');
+
+  const badges = [data.tone, data.emotion, data.twist, data.realism, data.length];
+
+  return { hooks, titles, thumbs, script, shots, caption, seo, prompt, variants, checklist, scores, wins, fixes, badges };
+}
+
+function renderPackage(out) {
+  id('hooks').innerHTML = out.hooks.map(item => `<li>${item}</li>`).join('');
+  id('hooksText').value = out.hooks.map((h, i) => `${i + 1}. ${h}`).join('
+');
+  smartSet(id('titles'), out.titles);
+  smartSet(id('thumbs'), out.thumbs);
+  smartSet(id('script'), out.script);
+  smartSet(id('shots'), out.shots);
+  smartSet(id('caption'), out.caption);
+  smartSet(id('seo'), out.seo);
+  id('prompt').value = out.prompt;
+  smartSet(id('variants'), out.variants);
+  smartSet(id('checklist'), out.checklist);
+
+  id('scoreMain').textContent = out.scores.overall;
+  id('scoreHook').textContent = out.scores.hook;
+  id('scoreClarity').textContent = out.scores.clarity;
+  id('scoreSeries').textContent = out.scores.series;
+  id('scoreFill').style.width = `${out.scores.overall}%`;
+  id('scoreLabel').textContent = out.scores.overall >= 80 ? 'Strong package with good retention potential' : out.scores.overall >= 65 ? 'Ready to test with small improvements' : 'Needs a sharper hook or clearer twist';
+  id('wins').innerHTML = out.wins.map(x => `<li>${x}</li>`).join('');
+  id('fixes').innerHTML = out.fixes.map(x => `<li>${x}</li>`).join('');
+  id('packagingBadges').innerHTML = out.badges.map(x => `<span class="badge">${x}</span>`).join('');
+}
+
+function generatePackage() {
+  const data = getData();
+  if (!data.idea) {
+    id('hooks').innerHTML = '<li>Add a core idea to generate the full package.</li>';
+    id('hooksText').value = 'Add a core idea to generate hooks.';
+    ['titles','thumbs','script','shots','caption','seo','variants','checklist'].forEach(key => smartSet(id(key), 'Waiting for a core idea...'));
+    id('prompt').value = 'Enter a core idea first, then the app will generate the full video package.';
+    id('wins').innerHTML = '<li>The tool is ready.</li>';
+    id('fixes').innerHTML = '<li>Add a premise with a clear strange moment.</li>';
+    id('packagingBadges').innerHTML = '<span class="badge">No idea yet</span>';
+    ['scoreMain','scoreHook','scoreClarity','scoreSeries'].forEach(x => id(x).textContent = '0');
+    id('scoreFill').style.width = '0%';
+    id('scoreLabel').textContent = 'Ready when you are';
+    saveDraft();
+    return;
+  }
+  const out = buildOutputs(data);
+  renderPackage(out);
+  saveDraft();
+}
+
+function exportPackage() {
+  const data = getData();
+  const out = buildOutputs(data);
+  const blob = new Blob([[
+    'RING SHORTS STUDIO EXPORT',
+    '',
+    'INPUTS',
+    JSON.stringify(data, null, 2),
+    '',
+    'HOOKS', out.hooks.map((h,i) => `${i+1}. ${h}`).join('
+'),
+    '',
+    'TITLES', out.titles,
+    '',
+    'THUMBNAILS', out.thumbs,
+    '',
+    'SCRIPT', out.script,
+    '',
+    'SHOT LIST', out.shots,
+    '',
+    'CAPTION + CTA', out.caption,
+    '',
+    'SEO', out.seo,
+    '',
+    'PROMPT', out.prompt,
+    '',
+    'VARIANTS', out.variants,
+    '',
+    'CHECKLIST', out.checklist
+  ].join('
+')], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'ring-shorts-package.txt';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function randomIdea() {
+  const ideas = [
+    'A package gets dropped off at night, and seconds later the camera catches someone crouching below the window line.',
+    'A delivery driver hears knocking from inside the glass door, but nobody is visible until the curtain shifts.',
+    'Someone steals a package, then awkwardly brings it back when the homeowner starts talking through the doorbell speaker.',
+    'A man grabs a package and suddenly backs away because a second face appears in the reflection behind him.'
+  ];
+  id('idea').value = randomFrom(ideas);
+  id('tone').value = randomFrom(['Suspenseful','Funny','Creepy','Wholesome','Chaotic']);
+  id('emotion').value = randomFrom(['Curiosity','Shock','Laughter','Tension','Relief']);
+  id('twist').value = randomFrom(['Misread danger','Funny misunderstanding','Unexpected return','Reveal behind glass','Neighbor chaos','Heartwarming payoff']);
+  generatePackage();
+}
+
+function resetExample() {
+  id('idea').value = 'A guy walks up to the porch to grab his package, then suddenly backs away like he saw something behind the glass.';
+  id('tone').value = 'Funny';
+  id('emotion').value = 'Curiosity';
+  id('length').value = '20 seconds';
+  id('twist').value = 'Reveal behind glass';
+  id('realism').value = 'Realistic but cinematic';
+  id('audience').value = 'People who love weird real-looking security footage with fast twists';
+  id('series').value = 'Create a repeatable short-form series with strong retention and return viewers';
+  id('setting').value = 'Suburban porch at night, warm porch bulb, reflective glass door, package on the mat';
+  id('ctaStyle').value = 'Ask a question';
+  id('rules').value = 'No gore, no explicit violence, no misleading claim that staged footage is real';
+  id('includeText').checked = true;
+  id('includeSound').checked = true;
+  id('includeSEO').checked = true;
+  id('safeMode').checked = true;
+  generatePackage();
+}
+
+function clearAll() {
+  ['idea','audience','series','setting','rules'].forEach(x => id(x).value = '');
+  id('tone').value = 'Suspenseful';
+  id('emotion').value = 'Curiosity';
+  id('length').value = '20 seconds';
+  id('twist').value = 'Misread danger';
+  id('realism').value = 'Realistic but cinematic';
+  id('ctaStyle').value = 'Ask a question';
+  id('includeText').checked = true;
+  id('includeSound').checked = true;
+  id('includeSEO').checked = true;
+  id('safeMode').checked = true;
+  generatePackage();
+}
+
+function buildPresetButtons() {
+  id('presetWrap').innerHTML = presets.map((p, i) => `<button type="button" class="preset-btn" data-preset="${i}">${p.label}</button>`).join('');
+  document.querySelectorAll('[data-preset]').forEach(btn => {
+    btn.addEventListener('click', () => applyPreset(presets[Number(btn.dataset.preset)]));
+  });
+}
+
+document.querySelectorAll('[data-copy]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = id(btn.getAttribute('data-copy'));
+    const text = ('value' in target && target.value) ? target.value : (target.innerText || target.textContent || '');
+    copyText(btn, text);
+  });
+});
+
+['idea','audience','series','setting','rules'].forEach(fieldId => id(fieldId).addEventListener('input', generatePackage));
+['tone','emotion','length','twist','realism','ctaStyle'].forEach(fieldId => id(fieldId).addEventListener('change', generatePackage));
+['includeText','includeSound','includeSEO','safeMode'].forEach(fieldId => id(fieldId).addEventListener('change', generatePackage));
+
+id('generateBtn').addEventListener('click', generatePackage);
+id('resetBtn').addEventListener('click', resetExample);
+id('clearBtn').addEventListener('click', clearAll);
+id('randomBtn').addEventListener('click', randomIdea);
+id('saveBtn').addEventListener('click', saveDraft);
+id('exportBtn').addEventListener('click', exportPackage);
+
+document.querySelector('[data-theme-toggle]').addEventListener('click', () => {
+  state.dark = !state.dark;
+  document.documentElement.setAttribute('data-theme', state.dark ? 'dark' : 'light');
+  document.querySelector('[data-theme-toggle]').textContent = state.dark ? '☀️' : '🌙';
+});
+
+buildPresetButtons();
+if (!loadDraft()) resetExample();
+else generatePackage();
+</script>
+</body>
+</html>
